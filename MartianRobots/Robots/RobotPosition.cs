@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MartianRobots.Models
+namespace MartianRobots.Robots
 {
     public class RobotPosition
     {
+
         public GridCoordinate Coordinate { get; set; }
         public OrientationType Orientation { get; set; }
 
@@ -14,34 +12,34 @@ namespace MartianRobots.Models
         private const int MaxNumberOfOrientations = 4;
         public void RotateLeft(int numberOfRotations)
         {
-            int currentDirrection = (int)Orientation + MaxNumberOfOrientations;
-            var finalOrientation = (currentDirrection - numberOfRotations) % MaxNumberOfOrientations;
+            int currentOrientation = (int)Orientation + MaxNumberOfOrientations;
+            var finalOrientation = Math.Abs((currentOrientation - numberOfRotations) % MaxNumberOfOrientations);
             Orientation = (OrientationType)finalOrientation;
 
         }
         public void RotateRight(int numberOfRotations)
         {
-            int CurrentOrientation = (int)Orientation;
-            var finalOrientation = (CurrentOrientation + numberOfRotations) % MaxNumberOfOrientations;
+            int currentOrientation = (int)Orientation;
+            var finalOrientation = (currentOrientation + numberOfRotations) % MaxNumberOfOrientations;
             Orientation = (OrientationType)finalOrientation;
 
         }
 
-        public void MoveForward(int NumberOfSteps)
+        public void MoveForward(int numberOfSteps)
         {
             switch (Orientation)
             {
                 case OrientationType.N:
-                    Coordinate.Y += NumberOfSteps;
+                    Coordinate.Y += numberOfSteps;
                     break;
                 case OrientationType.E:
-                    Coordinate.X += NumberOfSteps;
+                    Coordinate.X += numberOfSteps;
                     break;
                 case OrientationType.S:
-                    Coordinate.Y -= NumberOfSteps;
+                    Coordinate.Y -= numberOfSteps;
                     break;
                 case OrientationType.W:
-                    Coordinate.X -= NumberOfSteps;
+                    Coordinate.X -= numberOfSteps;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"the current orientation is not supported: {Orientation}");

@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using MartianRobots.Models;
+using MartianRobots.Controllers;
+using MartianRobots.Robots;
 
-namespace MartianRobots.Controllers
+namespace MartianRobots
 {
     internal class ExplorationProcessor
     {
+        private const int MAX_COORDINATE_VALUE = 50;
+        private const int MAX_INSTRUCTIONS_LENGTH= 100;
+        private readonly RobotFactory _robotFactory;
+
+        private readonly Dictionary<OrientationType,GridCoordinate> _scentPositions = new Dictionary<OrientationType, GridCoordinate>();
+
+        public ExplorationProcessor(RobotFactory robotFactory)
+        {
+            _robotFactory = robotFactory;
+        }
         public ExplorationResult Process(List<string> instructions)
         {
             if (instructions.Count < 0)
@@ -15,83 +25,76 @@ namespace MartianRobots.Controllers
             
             var result = new ExplorationResult();
 
-            var marsInput = instructions[0].Split("", StringSplitOptions.RemoveEmptyEntries)
+            var marsInput = instructions[0].Split(" ", StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => int.Parse(x.Trim())).ToList();
             result.Mars = CreateMars(marsInput);
+
             var robots = new List<Robot>();
             for (int i = 1; i < instructions.Count; i+= 2)
             {
-                robots.Add(ProcessRobot(instructions[i], i < instructions.Count -1 ? instructions[i+1] : String.Empty, result.Mars));
+                var initialPosition = instructions[i];
+                var movements = i < instructions.Count - 1 ? instructions[i + 1] : String.Empty;
+
+                robots.Add(ProcessRobot(initialPosition,movements , result.Mars));
             }
 
-
+            result.Robots = new List<string>();
+            robots.ForEach(x => result.Robots.Add(x.ToString()));
 
             return result;
         }
 
-        private Robot ProcessRobot(string initialPosistion, string movements, GridCoordinate mars)
+        public void ClearData()
         {
-            var robot = CreateRobot(initialPosistion, mars);
+            _scentPositions.Clear();
+        }
+
+        private Robot ProcessRobot(string initialPosition, string movements, GridCoordinate mars)
+        {
+            var robot = _robotFactory.CreateRobot(initialPosition, mars);
 
             if (string.IsNullOrEmpty(movements))
                 return robot;
 
-            for (int i = 1; i < movements.Length && !robot.Lost; i++)
+            if (movements.Length > MAX_INSTRUCTIONS_LENGTH)
+                movements = movements.Substring(0, MAX_INSTRUCTIONS_LENGTH);
+
+            var count = 1;
+            for (int i = 1; i < movements.Length; i++)
             {
-                robot.Move(movements[i], 1);
+                if (movements[i] == movements[i - 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    robot.Move(movements[i-1], count, mars);
+                    count = 1;
+
+                    if (robot.Lost)
+                    {
+                        if (robot.Lost = _scentPositions.TryAdd(robot.Position.Orientation, robot.Position.Coordinate)) // true => new edge point || false => already known edge => not lost
+                            return robot;
+
+                    }
+                }
             }
+
+            robot.Move(movements.Last(), count, mars);            // execute last movement command.
+            if (robot.Lost)
+                robot.Lost = _scentPositions.TryAdd(robot.Position.Orientation, robot.Position.Coordinate);
+            
 
             return robot;
         }
 
-        private Robot CreateRobot(string initialPosistion, GridCoordinate mars)
-        {
-            try
-            {
-                var inputs = initialPosistion.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
-                var robot = new Robot
-                {
-                    Position = new RobotPosition()
-                    {
-                        Coordinate = new GridCoordinate()
-                        {
-
-                        
-                        X = int.Parse(inputs[0]),
-                        Y = int.Parse(inputs[1])
-                        },
-                        Orientation = GetOrientation(inputs[2])
-                    }
-                };
-                robot.Lost = IsRobotLost(robot.Position.Coordinate, mars);
-
-                return robot;
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException(
-                    $"The robot's initial position's format is incorrect. Expected: (number) (number) N|E|S|W. Received: {initialPosistion}");
-            }
-        }
-
-        private bool IsRobotLost(GridCoordinate robotPosition, GridCoordinate mars)
-            => robotPosition.X > mars.X || robotPosition.Y > mars.Y;
-
-        private OrientationType GetOrientation(string orientation) =>
-            orientation switch
-            {
-                "N" => OrientationType.N,
-                "E" => OrientationType.E,
-                "S" => OrientationType.S,
-                "W" => OrientationType.W,
-                _ => throw new ArgumentOutOfRangeException($"The provided orientation is not supported: {orientation}")
-            };
+        
 
         private static GridCoordinate CreateMars(List<int> marsInput) 
             => new ()
             {
-                X = marsInput[0],
-                Y = marsInput[1]
+                X = marsInput[0] > MAX_COORDINATE_VALUE ? MAX_COORDINATE_VALUE : marsInput[0],
+                Y = marsInput[1] > MAX_COORDINATE_VALUE ? MAX_COORDINATE_VALUE : marsInput[1]
             };
         
     }
