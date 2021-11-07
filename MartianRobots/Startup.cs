@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MartianRobots.BL.Settings;
+using MartianRobots.BL;
+using Microsoft.Extensions.Options;
+using SimpleInjector;
 
 namespace MartianRobots
 {
@@ -26,14 +23,23 @@ namespace MartianRobots
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
-            //services.AddSingleton<ExplorationProcessor>();
-            services.AddSwaggerGen(c =>
+            services.AddSimpleInjector(Program.Container, x =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MartianRobots", Version = "v1" });
-            });
+                x.Services.AddOptions<Settings.Settings>()
+                    .Bind(Configuration.GetSection(Settings.Settings.ConfigName))
+                    .ValidateDataAnnotations();
+                x.Services.AddSingleton<ISettings, Settings.Settings>(y => y.GetRequiredService<IOptions<Settings.Settings>>().Value);
 
+                x.Services.AddBusinessLogic();
+                
+                x.Services.AddControllers();
+                x.Services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MartianRobots", Version = "v1" });
+                });
+
+            });
+            
             
         }
 

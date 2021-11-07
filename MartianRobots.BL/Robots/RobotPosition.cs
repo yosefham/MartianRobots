@@ -1,15 +1,18 @@
 ﻿using System;
 
-namespace MartianRobots.Robots
+namespace MartianRobots.BL.Robots
 {
-    public class RobotPosition
+    internal class RobotPosition : IRobotPosition
     {
-
+        private const int MaxNumberOfOrientations = 4;
+        
+        #region members
         public GridCoordinate Coordinate { get; set; }
         public OrientationType Orientation { get; set; }
+        #endregion
 
+        #region Public Methods
 
-        private const int MaxNumberOfOrientations = 4;
         public void RotateLeft(int numberOfRotations)
         {
             int currentOrientation = (int)Orientation + MaxNumberOfOrientations;
@@ -46,19 +49,9 @@ namespace MartianRobots.Robots
             }
 
         }
+
+        #endregion
     }
 
 
-    public class GridCoordinate
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-    }
-    public enum OrientationType
-    {
-        N = 0,
-        E = 1,
-        S = 2,
-        W = 3
-    }
 }

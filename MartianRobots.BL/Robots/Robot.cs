@@ -1,12 +1,15 @@
 ﻿using System;
 
-namespace MartianRobots.Robots
+namespace MartianRobots.BL.Robots
 {
-    public class Robot
+    public class Robot : IRobot
     {
-        public RobotPosition Position { get; set; }
+        #region Members
+        public IRobotPosition Position { get; set; }
         public bool Lost { get; set; } = false;
+        #endregion
 
+        #region Public Methods
         public override string ToString()
         {
             return $"{Position.Coordinate.X} {Position.Coordinate.Y} {Position.Orientation}" + (Lost ? " LOST" : String.Empty);
@@ -34,14 +37,18 @@ namespace MartianRobots.Robots
                 CalculateScent(mars);
         }
 
+        public bool IsRobotLost( GridCoordinate mars)
+        => Lost =  Position.Coordinate.X < 0 || Position.Coordinate.Y < 0  || Position.Coordinate.X > mars.X || Position.Coordinate.Y > mars.Y;
+
+        #endregion
+
+        #region Private Methods
         private void CalculateScent(GridCoordinate mars)
         {
             Position.Coordinate.X = Position.Coordinate.X > mars.X? mars.X : Position.Coordinate.X < 0 ? 0 : Position.Coordinate.X;
             Position.Coordinate.Y = Position.Coordinate.Y > mars.Y? mars.Y : Position.Coordinate.Y < 0 ? 0 : Position.Coordinate.Y;
         }
-
-        public bool IsRobotLost( GridCoordinate mars)
-        => Lost =  Position.Coordinate.X < 0 || Position.Coordinate.Y < 0  || Position.Coordinate.X > mars.X || Position.Coordinate.Y > mars.Y;
+        #endregion
 
     }
 

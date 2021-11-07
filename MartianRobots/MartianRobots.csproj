@@ -9,6 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="SimpleInjector" Version="5.3.2" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.3.0" />
+    <PackageReference Include="SimpleInjector.Integration.GenericHost" Version="5.3.0" />
+	  <PackageReference Include="SimpleInjector.Integration.ServiceCollection" Version="5.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MartianRobots.BL\MartianRobots.BL.csproj" />
+    <ProjectReference Include="..\MartianRobots.Models\MartianRobots.Common.csproj" />
   </ItemGroup>
 
 </Project>
