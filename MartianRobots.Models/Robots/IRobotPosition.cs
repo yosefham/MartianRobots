@@ -1,4 +1,4 @@
-﻿namespace MartianRobots.BL.Robots
+﻿namespace MartianRobots.Common.Robots
 {
     public interface IRobotPosition
     {

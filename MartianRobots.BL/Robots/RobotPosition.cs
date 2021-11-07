@@ -1,4 +1,5 @@
 ﻿using System;
+using MartianRobots.Common.Robots;
 
 namespace MartianRobots.BL.Robots
 {
@@ -15,17 +16,28 @@ namespace MartianRobots.BL.Robots
 
         public void RotateLeft(int numberOfRotations)
         {
-            int currentOrientation = (int)Orientation + MaxNumberOfOrientations;
-            var finalOrientation = Math.Abs((currentOrientation - numberOfRotations) % MaxNumberOfOrientations);
-            Orientation = (OrientationType)finalOrientation;
+            if (numberOfRotations < 0)
+                RotateRight(Math.Abs(numberOfRotations));
+            else
+            {
+                if (numberOfRotations > MaxNumberOfOrientations)
+                    numberOfRotations %= MaxNumberOfOrientations;
 
+                int currentOrientation = (int) Orientation + MaxNumberOfOrientations;
+                var finalOrientation = (currentOrientation - numberOfRotations) % MaxNumberOfOrientations;
+                Orientation = (OrientationType) finalOrientation;
+            }
         }
         public void RotateRight(int numberOfRotations)
         {
-            int currentOrientation = (int)Orientation;
-            var finalOrientation = (currentOrientation + numberOfRotations) % MaxNumberOfOrientations;
-            Orientation = (OrientationType)finalOrientation;
-
+            if (numberOfRotations < 0)
+                RotateLeft(Math.Abs(numberOfRotations));
+            else
+            {
+                int currentOrientation = (int) Orientation;
+                var finalOrientation = (currentOrientation + numberOfRotations) % MaxNumberOfOrientations;
+                Orientation = (OrientationType) finalOrientation;
+            }
         }
 
         public void MoveForward(int numberOfSteps)

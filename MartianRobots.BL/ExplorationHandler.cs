@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MartianRobots.BL.Robots;
-using MartianRobots.BL.Settings;
+using MartianRobots.Common.Configuration;
+using MartianRobots.Common.Robots;
 
 namespace MartianRobots.BL
 {

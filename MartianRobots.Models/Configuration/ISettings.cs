@@ -1,4 +1,4 @@
-﻿namespace MartianRobots.BL.Settings
+﻿namespace MartianRobots.Common.Configuration
 {
     public interface ISettings
     {

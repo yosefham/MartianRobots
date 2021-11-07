@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MartianRobots.BL.Settings;
+using MartianRobots.Common.Configuration;
 
-namespace MartianRobots.Settings
+namespace MartianRobots.Configuration
 {
     internal class Settings : ISettings
     {

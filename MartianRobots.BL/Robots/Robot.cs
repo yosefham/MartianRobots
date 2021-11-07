@@ -1,4 +1,5 @@
 ﻿using System;
+using MartianRobots.Common.Robots;
 
 namespace MartianRobots.BL.Robots
 {
@@ -45,8 +46,8 @@ namespace MartianRobots.BL.Robots
         #region Private Methods
         private void CalculateScent(GridCoordinate mars)
         {
-            Position.Coordinate.X = Position.Coordinate.X > mars.X? mars.X : Position.Coordinate.X < 0 ? 0 : Position.Coordinate.X;
-            Position.Coordinate.Y = Position.Coordinate.Y > mars.Y? mars.Y : Position.Coordinate.Y < 0 ? 0 : Position.Coordinate.Y;
+            Position.Coordinate.X = Position.Coordinate.X > mars.X ? mars.X : Position.Coordinate.X < 0 ? 0 : Position.Coordinate.X;
+            Position.Coordinate.Y = Position.Coordinate.Y > mars.Y ? mars.Y : Position.Coordinate.Y < 0 ? 0 : Position.Coordinate.Y;
         }
         #endregion
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using MartianRobots.BL;
 using MartianRobots.BL.Robots;
+using MartianRobots.Common.Robots;
 
 namespace MartianRobots.Controllers
 {

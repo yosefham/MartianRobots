@@ -4,8 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using MartianRobots.BL.Settings;
 using MartianRobots.BL;
+using MartianRobots.Common.Configuration;
+using MartianRobots.Configuration;
 using Microsoft.Extensions.Options;
 using SimpleInjector;
 
@@ -25,10 +26,10 @@ namespace MartianRobots
         {
             services.AddSimpleInjector(Program.Container, x =>
             {
-                x.Services.AddOptions<Settings.Settings>()
-                    .Bind(Configuration.GetSection(Settings.Settings.ConfigName))
+                x.Services.AddOptions<Settings>()
+                    .Bind(Configuration.GetSection(Settings.ConfigName))
                     .ValidateDataAnnotations();
-                x.Services.AddSingleton<ISettings, Settings.Settings>(y => y.GetRequiredService<IOptions<Settings.Settings>>().Value);
+                x.Services.AddSingleton<ISettings, Settings>(y => y.GetRequiredService<IOptions<Settings>>().Value);
 
                 x.Services.AddBusinessLogic();
                 
