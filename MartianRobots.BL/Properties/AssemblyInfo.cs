@@ -17,3 +17,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("50c92918-2907-4a10-8868-8ab98c86bd99")]
 [assembly: InternalsVisibleTo("MartianRobots.Tests.Unit")]
+[assembly: InternalsVisibleTo("MartianRobots.Tests.Integration")]

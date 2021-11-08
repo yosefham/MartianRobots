@@ -25,18 +25,45 @@ namespace MartianRobots.Controllers
         [Route("explore")]
         public ExploreResult Explore([FromBody]List<string> request)
         {
-            if (request.Count < 0)
+            if (request == null || request.Count <= 0)
+                return null;
+
+            try
+            {
+                var invalidId = -999;         // Valid ids are all positive
+                var instructions = request.Select(x => x.Trim().ToUpper()).ToList();  // format input
+                var id = _handler.Process(instructions, invalidId);
+
+                var result = new ExploreResult()
+                {
+                    Mars = _handler.GetMarsGrid(id),
+                    Robots = _handler.GetRobotsPosition(id),
+                    Id = id
+                };
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw new HttpRequestException($"The request failed due to: {e.Message}", e);
+            }
+        }[HttpPost]
+        [Route("{id}/Update")]
+        public ExploreResult Update([FromBody]List<string> request, [FromRoute]int id)
+        {
+            if (request == null || request.Count <= 0)
                 return null;
 
             try
             {
                 var instructions = request.Select(x => x.Trim().ToUpper()).ToList();  // format input
-                _handler.Process(instructions);
+                _handler.Process(instructions, id);
 
                 var result = new ExploreResult()
                 {
-                    Mars = _handler.GetMarsGrid(),
-                    Robots = _handler.GetRobotsPosition()
+                    Mars = _handler.GetMarsGrid(id),
+                    Robots = _handler.GetRobotsPosition(id),
+                    Id = id
                 };
 
                 return result;
@@ -48,12 +75,12 @@ namespace MartianRobots.Controllers
         }
 
         [HttpPost]
-        [Route("Delete")]
-        public void Clear()
+        [Route("{id}/Delete")]
+        public void Clear([FromRoute] int id)
         {
             try
             {
-                _handler.ClearData();
+                _handler.ClearData(id);
 
             }
             catch (Exception e)
@@ -63,22 +90,24 @@ namespace MartianRobots.Controllers
         }
 
         [HttpGet]
-        [Route("Status")]
-        public StatusResponse GetStatus()
+        [Route("{id}/Status")]
+        public StatusResponse GetStatus([FromRoute] int id)
         {
             return new()
             {
-                ExplorationRatio = _handler.PercentageOfExploration(),
-                ActiveRobots = _handler.NumberOfActiveRobots(),
-                LostRobots = _handler.NumberOfLostRobots(),
-                Mars = _handler.GetMarsGrid(),
-                KnownEdges = _handler.GetRobotsScent()
+                Id = id,
+                ExplorationRatio = _handler.PercentageOfExploration(id),
+                ActiveRobots = _handler.NumberOfActiveRobots(id),
+                LostRobots = _handler.NumberOfLostRobots(id),
+                Mars = _handler.GetMarsGrid(id),
+                KnownEdges = _handler.GetRobotsScent(id)
             };
         }
     }
 
     public class StatusResponse
     {
+        public int Id { get; set; }
         public double ExplorationRatio { get; set; }
         public int ActiveRobots { get; set; }
         public int LostRobots { get; set; }
@@ -88,9 +117,9 @@ namespace MartianRobots.Controllers
 
     public class ExploreResult
     {
+        public int Id { get; set; }
         public List<string> Robots { get; set; }
         public GridCoordinate Mars { get; set; }
-
     }
 
 }

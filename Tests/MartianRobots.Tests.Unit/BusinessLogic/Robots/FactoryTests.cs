@@ -19,12 +19,12 @@ namespace MartianRobots.Tests.Unit.BusinessLogic.Robots
 
         public FactoryTests()
         {
-            ISettings _settings = new Settings
+            ISettings settings = new Settings
             {
                 MaxCoordinateValue = 50,
                 MaxMovementLength = 100
             };
-            _sut = new Factory(_settings);
+            _sut = new Factory(settings);
         }
 
         [Fact(DisplayName = "Should create a robot successfully.")]

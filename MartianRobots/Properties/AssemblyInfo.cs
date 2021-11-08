@@ -15,5 +15,6 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5eabdd61-e919-43b3-a6a6-66670f13e789")]
 [assembly: InternalsVisibleTo("MartianRobots.Tests.Unit")]
+[assembly: InternalsVisibleTo("MartianRobots.Tests.Integration")]
 
 
