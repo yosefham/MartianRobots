@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using MartianRobots.BL;
-using MartianRobots.BL.Robots;
-using MartianRobots.Common.Robots;
+using MartianRobots.Common.Exploration.Robots;
 
 namespace MartianRobots.Controllers
 {
@@ -36,7 +35,7 @@ namespace MartianRobots.Controllers
 
                 var result = new ExploreResult()
                 {
-                    Mars = _handler.GetMarsGrid(id),
+                    Mars = _handler.GetPlanetGrid(id),
                     Robots = _handler.GetRobotsPosition(id),
                     Id = id
                 };
@@ -61,7 +60,7 @@ namespace MartianRobots.Controllers
 
                 var result = new ExploreResult()
                 {
-                    Mars = _handler.GetMarsGrid(id),
+                    Mars = _handler.GetPlanetGrid(id),
                     Robots = _handler.GetRobotsPosition(id),
                     Id = id
                 };
@@ -93,22 +92,34 @@ namespace MartianRobots.Controllers
         [Route("{id}/Status")]
         public StatusResponse GetStatus([FromRoute] int id)
         {
-            return new()
+            try
             {
-                Id = id,
-                ExplorationRatio = _handler.PercentageOfExploration(id),
-                ActiveRobots = _handler.NumberOfActiveRobots(id),
-                LostRobots = _handler.NumberOfLostRobots(id),
-                Mars = _handler.GetMarsGrid(id),
-                KnownEdges = _handler.GetRobotsScent(id)
-            };
+                return new()
+                {
+                    Id = id,
+                    ActiveRobots = _handler.NumberOfActiveRobots(id),
+                    LostRobots = _handler.NumberOfLostRobots(id),
+                    Mars = _handler.GetPlanetGrid(id),
+                    KnownEdges = _handler.GetRobotsScent(id)
+                };
+            }
+            catch (Exception e)
+            {
+                throw new HttpRequestException("There was an internal error. Please retry later.", e);
+            }
+        }
+
+        [HttpGet]
+        [Route("Active")]
+        public List<int> ActiveId()
+        {
+            return _handler.GetActivePlanets();
         }
     }
 
     public class StatusResponse
     {
         public int Id { get; set; }
-        public double ExplorationRatio { get; set; }
         public int ActiveRobots { get; set; }
         public int LostRobots { get; set; }
         public GridCoordinate Mars { get; set; }

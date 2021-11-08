@@ -1,7 +1,7 @@
 ﻿using System;
-using MartianRobots.Common.Robots;
+using MartianRobots.Common.Exploration.Robots;
 
-namespace MartianRobots.BL.Robots
+namespace MartianRobots.BL.Exploration.Robots
 {
     public class Robot : IRobot
     {
@@ -16,7 +16,7 @@ namespace MartianRobots.BL.Robots
             return $"{Position.Coordinate.X} {Position.Coordinate.Y} {Position.Orientation}" + (Lost ? " LOST" : String.Empty);
         }
 
-        public void Move(char movement, int numberOfSteps, GridCoordinate mars)
+        public void Move(char movement, int numberOfSteps, GridCoordinate planet)
         {
             if (Lost) return;
 
@@ -34,12 +34,12 @@ namespace MartianRobots.BL.Robots
                // default:  throw new ArgumentOutOfRangeException($"The provided command is not supported: {movement}");
             }
 
-            if (IsRobotLost(mars))
-                CalculateScent(mars);
+            if (IsRobotLost(planet))
+                CalculateScent(planet);
         }
 
-        public bool IsRobotLost( GridCoordinate mars)
-        => Lost =  Position.Coordinate.X < 0 || Position.Coordinate.Y < 0  || Position.Coordinate.X > mars.X || Position.Coordinate.Y > mars.Y;
+        public bool IsRobotLost( GridCoordinate planet)
+        => Lost =  Position.Coordinate.X < 0 || Position.Coordinate.Y < 0  || Position.Coordinate.X > planet.X || Position.Coordinate.Y > planet.Y;
 
         #endregion
 

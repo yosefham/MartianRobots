@@ -1,27 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MartianRobots.BL.Exploration;
-using MartianRobots.BL.Robots;
+using MartianRobots.BL.Exploration.Robots;
 using MartianRobots.Common.Configuration;
 using MartianRobots.Common.Exploration;
-using MartianRobots.Common.Robots;
+using MartianRobots.Common.Exploration.Robots;
 
 namespace MartianRobots.BL
 {
-    public interface IExplorationHandler
-    {
-        int Process(List<string> instructions, int planetId);
-        void ClearData(int planetId);
-        List<string> GetRobotsPosition(int planetId);
-        List<string> GetRobotsScent(int planetId);
-        GridCoordinate GetMarsGrid(int planetId);
-        int NumberOfActiveRobots(int planetId);
-        int NumberOfLostRobots(int planetId);
-        double PercentageOfExploration(int planetId);
-
-    }
-
     internal class ExplorationHandler : IExplorationHandler
     {
         #region Members
@@ -44,13 +32,16 @@ namespace MartianRobots.BL
 
         public int Process(List<string> instructions, int planetId)
         {
-            if (instructions.Count < 0)
-                return -1;
+            if (instructions.Count <= 0)
+                return planetId;
 
-            if ((_planet = _planetManager.GetPlanet(planetId)) == null)
+            if ((_planet = _planetManager.GetPlanet(planetId)) == null || Regex.IsMatch(instructions[0], "^[0-9]+\\s+[0-9]+$"))
             {
-                _planet = new Planet();
-                _planet.Coordinate = _factory.CreateMars(instructions[0]);
+                if (_planet == null)
+                {
+                    _planet = new Planet();
+                    _planet.Coordinate = _factory.CreateMars(instructions[0]);
+                }
                 instructions.RemoveAt(0);               // Remove planet grid input
             }
 
@@ -73,27 +64,27 @@ namespace MartianRobots.BL
 
         public List<string> GetRobotsScent(int planetId)
         {
-            return _planetManager.GetScents(planetId).Select(x => $"{x.Coordinate.X} {x.Coordinate.Y} {x.Orientation}").ToList();
+            return _planetManager.GetScents(planetId)?.Select(x => $"{x.Value.X} {x.Value.Y} {x.Key}").ToList();
         }
 
-        public GridCoordinate GetMarsGrid(int planetId)
+        public GridCoordinate GetPlanetGrid(int planetId)
         {
             return _planetManager.GetPlanetGrid(planetId);
         }
 
         public int NumberOfActiveRobots(int planetId)
         {
-            return _planetManager.GetRobots(planetId).Count(x => !x.Lost);
+            return _planetManager.GetRobots(planetId)?.Count(x => !x.Lost) ?? 0;
         }
 
         public int NumberOfLostRobots(int planetId)
         {
-            return _planetManager.GetRobots(planetId).Count(x => x.Lost);
+            return _planetManager.GetRobots(planetId)?.Count(x => x.Lost) ?? 0;
         }
 
-        public double PercentageOfExploration(int planetId)
+        public List<int> GetActivePlanets()
         {
-            return _planetManager.GetExplorationRatio(planetId);
+            return _planetManager.ActivePlanets();
         }
 
         #endregion

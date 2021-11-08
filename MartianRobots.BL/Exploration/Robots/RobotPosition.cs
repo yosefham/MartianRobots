@@ -1,7 +1,7 @@
 ﻿using System;
-using MartianRobots.Common.Robots;
+using MartianRobots.Common.Exploration.Robots;
 
-namespace MartianRobots.BL.Robots
+namespace MartianRobots.BL.Exploration.Robots
 {
     internal class RobotPosition : IRobotPosition
     {

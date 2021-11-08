@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MartianRobots.Common.Robots;
+﻿using System.Collections.Generic;
+using MartianRobots.Common.Exploration.Robots;
 
 namespace MartianRobots.Common.Exploration
 {

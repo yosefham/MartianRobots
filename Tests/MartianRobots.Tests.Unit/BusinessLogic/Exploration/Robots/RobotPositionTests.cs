@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
-using MartianRobots.BL.Robots;
-using MartianRobots.Common.Robots;
+using MartianRobots.BL.Exploration.Robots;
+using MartianRobots.Common.Exploration.Robots;
 using Xunit;
 
-namespace MartianRobots.Tests.Unit.BusinessLogic.Robots
+namespace MartianRobots.Tests.Unit.BusinessLogic.Exploration.Robots
 {
     public class RobotPositionTests
     {

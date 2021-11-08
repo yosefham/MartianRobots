@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Linq;
 using MartianRobots.Common.Configuration;
-using MartianRobots.Common.Robots;
+using MartianRobots.Common.Exploration.Robots;
 
-namespace MartianRobots.BL.Robots
+namespace MartianRobots.BL.Exploration.Robots
 {
     public interface IFactory
     {
+        /// <summary>
+        /// Create a new instance of IRobot
+        /// </summary>
+        /// <param name="initialPosition">initialPosition</param>
+        /// <param name="mars">mars</param>
+        /// <returns>IRobot instance</returns>
         IRobot CreateRobot(string initialPosition, GridCoordinate mars);
 
+        /// <summary>
+        /// Create a new instance of IPlanet
+        /// </summary>
+        /// <param name="size">size</param>
+        /// <returns>IPlanet instance</returns>
         GridCoordinate CreateMars(string size);
     }
 
